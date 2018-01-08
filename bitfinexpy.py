@@ -8,7 +8,6 @@ LICENSE: MIT
 """
 
 import json,time,hmac,hashlib,requests,datetime,base64
-import pandas as pd
 
 """EndpointsMixin provides a mixin for the API instance """
 class EndpointsMixin(object):
@@ -336,13 +335,13 @@ class API(EndpointsMixin, object):
         """ Returns dict of response from Bitfinex's open API """
         method = method.lower()
 
-        url = '%s/%s' % ( self.api_url, endpoint)
+        url = '%s%s' % ( self.api_url, endpoint)
 
         request_args = {'params':params}
 
         if auth:
             payloadObject = {
-                "request": "/v1/%s" % endpoint,
+                "request": "/v1%s" % endpoint,
                 "nonce": self.nonce
             }
             if payload_params is not None:
@@ -366,6 +365,7 @@ class API(EndpointsMixin, object):
 
         # error message
         if response.status_code >= 400:
+            print("error_response : %s" % content)
             raise BitfinexError(response.status_code,content)
 
         return content
@@ -431,6 +431,6 @@ class BitfinexError(Exception):
     """
 
     def __init__(self, status_code, error_response):
-        msg = "BITFINEX API returned error code %s (%s) " % (status_code, error_response['error'])
+        msg = "BITFINEX API returned error code %s (%s)" % (status_code, error_response['error'])
 
         super(BitfinexError, self).__init__(msg)
