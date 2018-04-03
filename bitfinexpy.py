@@ -140,7 +140,7 @@ class EndpointsMixin(object):
         endpoint = 'order/cancel/all'
         return self.request(endpoint, method='POST', payload_params=params)
 
-    def replace_order(self, order_id, symbol, amount, price, side, order_type):
+    def replace_order(self, order_id, symbol, amount, price, side, order_type, **params):
         """ Replace an orders with a new one.
         Docs: http://docs.bitfinex.com/#replace-orders
         """
@@ -327,7 +327,6 @@ class API(EndpointsMixin, object):
 
         self.key = key
         self.secret_key = bytes(secret_key, 'utf-8')
-        self.nonce = str(time.time() * 100000)
 
         self.client = requests.Session()
 
@@ -341,8 +340,8 @@ class API(EndpointsMixin, object):
 
         if auth:
             payloadObject = {
-                "request": "/v1%s" % endpoint,
-                "nonce": self.nonce
+                "request": "/v1/%s" % endpoint,
+                "nonce": str(time.time() * 1000000) # update nonce each POST request
             }
             if payload_params is not None:
                 payloadObject.update(payload_params)
