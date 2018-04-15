@@ -15,7 +15,7 @@ class EndpointsMixin(object):
     """Public API"""
     def ticker(self, **params):
         """ Gives innermost bid and asks and information on the most recent trade, as well as high, low and volume of the last 24 hours.
-        Docs: http://docs.bitfinex.com/#ticker
+        Docs: https://docs.bitfinex.com/v1/reference#rest-public-ticker
         """
         symbol = params.pop('symbol')
         endpoint = 'pubticker/'+symbol
@@ -85,7 +85,7 @@ class EndpointsMixin(object):
         Docs: http://docs.bitfinex.com/#account-info
         """
         endpoint = 'account_infos'
-        return self.request(endpoint, params=params)
+        return self.request(endpoint, payload_params=params)
 
     """ Deposit """
     def deposit(self, **params):
@@ -174,7 +174,7 @@ class EndpointsMixin(object):
         """ View your active positions.
         Docs: http://docs.bitfinex.com/#active-positions
         """
-        endpoint = '/positions'
+        endpoint = 'positions'
         return self.request(endpoint, method='POST', payload_params=params)
 
     def claim_position(self, position_id, **params):
@@ -186,7 +186,7 @@ class EndpointsMixin(object):
             The amount in the first unit of the position pair that you have in your trading wallet is greater or equal to the amount of the position and the margin funding used.
         Docs: http://docs.bitfinex.com/#claim-position
         """
-        endpoint = '/position/claim'
+        endpoint = 'position/claim'
         params['position_id'] = position_id
         return self.request(endpoint, method='POST', payload_params=params)
 
@@ -195,7 +195,7 @@ class EndpointsMixin(object):
         """ View all of your balance ledger entries.
         Docs: http://docs.bitfinex.com/#balance-history
         """
-        endpoint = '/history'
+        endpoint = 'history'
         params['currency'] = currency
         return self.request(endpoint, method='POST', payload_params=params)
 
@@ -203,7 +203,7 @@ class EndpointsMixin(object):
         """ View all of your balance ledger entries.
         Docs: http://docs.bitfinex.com/#balance-history
         """
-        endpoint = '/history/movements'
+        endpoint = 'history/movements'
         params['currency'] = currency
         return self.request(endpoint, method='POST', payload_params=params)
 
@@ -211,7 +211,7 @@ class EndpointsMixin(object):
         """ View all of your balance ledger entries.
         Docs: http://docs.bitfinex.com/#balance-history
         """
-        endpoint = '/mytrades'
+        endpoint = 'mytrades'
         params['symbol'] = symbol
         return self.request(endpoint, method='POST', payload_params=params)
 
@@ -220,7 +220,7 @@ class EndpointsMixin(object):
         """ Submit a new offer.
         Docs: http://docs.bitfinex.com/#new-offer
         """
-        endpoint = '/offer/new'
+        endpoint = 'offer/new'
         params['currency'] = currency
         params['amount'] = amount
         params['rate'] = rate
@@ -232,7 +232,7 @@ class EndpointsMixin(object):
         """ Cancel an offer.
         Docs: http://docs.bitfinex.com/#cancel-offer
         """
-        endpoint = '/offer/cancel'
+        endpoint = 'offer/cancel'
         params['offer_id'] = offer_id
         return self.request(endpoint, method='POST', payload_params=params)
 
@@ -240,7 +240,7 @@ class EndpointsMixin(object):
         """ Get the status of an offer. Is it active? Was it cancelled? To what extent has it been executed? etc.
         Docs: http://docs.bitfinex.com/#offer-status
         """
-        endpoint = '/offer/status'
+        endpoint = 'offer/status'
         params['offer_id'] = offer_id
         return self.request(endpoint, method='POST', payload_params=params)
 
@@ -248,28 +248,28 @@ class EndpointsMixin(object):
         """ View your active offers.
         Docs: http://docs.bitfinex.com/#active-credits
         """
-        endpoint = '/offers'
+        endpoint = 'offers'
         return self.request(endpoint, method='POST', payload_params=params)
 
     def active_funding_used_in_a_margin_position(self, **params):
         """ View your funding currently borrowed and used in a margin position.
         Docs: http://docs.bitfinex.com/#active-funding-used-in-a-margin-position
         """
-        endpoint = '/taken_funds'
+        endpoint = 'taken_funds'
         return self.request(endpoint, method='POST', payload_params=params)
 
     def total_taken_funds(self, **params):
         """ View the total of your active-funding used in your position(s).
         Docs: http://docs.bitfinex.com/#total-taken-funds
         """
-        endpoint = '/total_taken_funds'
+        endpoint = 'total_taken_funds'
         return self.request(endpoint, method='POST', payload_params=params)
 
     def close_margin_funding(self, **params):
         """ Return the funding taken in a margin position.
         Docs: http://docs.bitfinex.com/#total-taken-funds
         """
-        endpoint = '/funding/close'
+        endpoint = 'funding/close'
         return self.request(endpoint, method='POST', payload_params=params)
 
     """ Wallet Balances """
@@ -277,7 +277,7 @@ class EndpointsMixin(object):
         """ See your balances.
         Docs: http://docs.bitfinex.com/#wallet-balances
         """
-        endpoint = '/balances'
+        endpoint = 'balances'
         return self.request(endpoint, method='POST', payload_params=params)
 
     """ Margin Information """
@@ -285,7 +285,7 @@ class EndpointsMixin(object):
         """ See your trading wallet information for margin trading.
         Docs: http://docs.bitfinex.com/#margin-information
         """
-        endpoint = '/margin_infos'
+        endpoint = 'margin_infos'
         return self.request(endpoint, method='POST', payload_params=params)
 
     """ Transfer Between Wallets """
@@ -293,7 +293,7 @@ class EndpointsMixin(object):
         """ Allow you to move available balances between your wallets.
         Docs: http://docs.bitfinex.com/#margin-information
         """
-        endpoint = '/transfer'
+        endpoint = 'transfer'
         params['amount'] = amount
         params['currency'] = currency
         params['walletfrom'] = walletfrom
@@ -305,7 +305,7 @@ class EndpointsMixin(object):
         """ Allow you to request a withdrawal from one of your wallet.
         Docs: http://docs.bitfinex.com/#withdrawal
         """
-        endpoint = '/withdraw'
+        endpoint = 'withdraw'
         params['withdraw_type'] = withdraw_type
         params['walletselected'] = walletselected
         params['amount'] = amount
@@ -320,7 +320,7 @@ class API(EndpointsMixin, object):
         """ Instantiates an instance of BitfinexPy's API wrapper """
 
         if environment == 'live':
-            self.api_url = 'https://api.bitfinex.com/v1'
+            self.api_url = 'https://api.bitfinex.com/v1/'
         else:
             # for future, access to a demo account.
             pass
@@ -357,14 +357,15 @@ class API(EndpointsMixin, object):
         func = getattr(self.client, method)
         try:
             response = func(url, **request_args)
-        except requests.RequestException as e:
-            print (str(e))
+        except Exception as e:
+            print("Failed to get the response because %s. \
+			      The request url is %s"%(str(e),url))
 
         content = response.json()
 
         # error message
         if response.status_code >= 400:
-            print("error_response : %s" % content)
+            print("%s error_response : %s"%(str(response.status_code),content))
             raise BitfinexError(response.status_code,content)
 
         return content
