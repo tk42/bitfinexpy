@@ -58,7 +58,7 @@ class EndpointsMixin(object):
         Docs: http://docs.bitfinex.com/#lends
         """
         symbol = params.pop('symbol')
-        endpoint = 'book/'+symbol
+        endpoint = 'lends/'+symbol
         return self.request(endpoint, auth=False, params=params)
 
     def symbols(self,**params):
