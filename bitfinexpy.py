@@ -1,24 +1,29 @@
 # -*- coding: utf-8 -*-
-""" BITFINEX API wrapper """
+# BITFINEX API wrapper
+#
+#
+# AUTHOR: @jimako1989
+# GITHUB: github.com/jimako1989/bitfinexpy
+# LICENSE: MIT
+#
 
-"""
-AUTHOR: @jimako1989
-GITHUB: github.com/jimako1989/bitfinexpy
-LICENSE: MIT
-"""
+import base64
+import hashlib
+import hmac
+import json
+import requests
+import time
 
-import json,time,hmac,hashlib,requests,datetime,base64
 
-"""EndpointsMixin provides a mixin for the API instance """
+# EndpointsMixin provides a mixin for the API instance
 class EndpointsMixin(object):
-
-    """Public API"""
+    # Public API #######################################################
     def ticker(self, **params):
         """ Gives innermost bid and asks and information on the most recent trade, as well as high, low and volume of the last 24 hours.
         Docs: https://docs.bitfinex.com/v1/reference#rest-public-ticker
         """
         symbol = params.pop('symbol')
-        endpoint = 'pubticker/'+symbol
+        endpoint = 'pubticker/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
     def stats(self, **params):
@@ -26,7 +31,7 @@ class EndpointsMixin(object):
         Docs: http://docs.bitfinex.com/#stats
         """
         symbol = params.pop('symbol')
-        endpoint = 'stats/'+symbol
+        endpoint = 'stats/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
     def fundingbook(self, **params):
@@ -34,52 +39,50 @@ class EndpointsMixin(object):
         Docs: http://docs.bitfinex.com/#fundingbook
         """
         symbol = params.pop('symbol')
-        endpoint = 'lendbook/'+symbol
+        endpoint = 'lendbook/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
-    def orderbook(self,**params):
+    def orderbook(self, **params):
         """ Get the full order book.
         Docs: http://docs.bitfinex.com/#orderbook
         """
         symbol = params.pop('symbol')
-        endpoint = 'book/'+symbol
+        endpoint = 'book/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
-    def trades(self,**params):
+    def trades(self, **params):
         """ Get a list of the most recent trades for the given symbol.
         Docs: http://docs.bitfinex.com/#trades
         """
         symbol = params.pop('symbol')
-        endpoint = 'trades/'+symbol
+        endpoint = 'trades/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
-    def lends(self,**params):
+    def lends(self, **params):
         """ Get a list of the most recent funding data for the given currency: total amount lent and Flash Return Rate (in % by 365 days) over time.
         Docs: http://docs.bitfinex.com/#lends
         """
         symbol = params.pop('symbol')
-        endpoint = 'lends/'+symbol
+        endpoint = 'lends/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
-    def symbols(self,**params):
+    def symbols(self, **params):
         """ Get a list of valid symbol IDs.
         Docs: http://docs.bitfinex.com/#symbols
         """
-        symbol = params.pop('symbol')
-        endpoint = 'book/'+symbol
+        endpoint = 'symbols'
         return self.request(endpoint, auth=False, params=params)
 
-    def symbol_details(self,**params):
+    def symbol_details(self, **params):
         """ Get a list of valid symbol IDs and the pair details.
         Docs: http://docs.bitfinex.com/#symbol-details
         """
         symbol = params.pop('symbol')
-        endpoint = 'book/'+symbol
+        endpoint = 'book/' + symbol
         return self.request(endpoint, auth=False, params=params)
 
-
-    """ Private API """
-    """ Account """
+    # Private API #######################################################
+    # Account
     def account_infos(self, **params):
         """ Check the balance.
         Docs: http://docs.bitfinex.com/#account-info
@@ -87,7 +90,7 @@ class EndpointsMixin(object):
         endpoint = 'account_infos'
         return self.request(endpoint, payload_params=params)
 
-    """ Deposit """
+    # Deposit
     def deposit(self, **params):
         """ Return your deposit address to make a new deposit.
         Docs: http://docs.bitfinex.com/#deposit
@@ -95,7 +98,7 @@ class EndpointsMixin(object):
         endpoint = 'deposit/new'
         return self.request(endpoint, payload_params=params)
 
-    """ Order """
+    # Order
     def new_order(self, symbol, amount, price, side, order_type, **params):
         """ Submit a new order.
         Docs: http://docs.bitfinex.com/#new-order
@@ -114,7 +117,7 @@ class EndpointsMixin(object):
         Docs: http://docs.bitfinex.com/#new-order
         """
         endpoint = 'order/new/multi'
-        params['orders']=json.dumps(orders)
+        params['orders'] = json.dumps(orders)
         return self.request(endpoint, method='POST', payload_params=params)
 
     def cancel_order(self, order_id, **params):
@@ -169,7 +172,7 @@ class EndpointsMixin(object):
         endpoint = 'orders'
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Positions """
+    # Positions
     def active_positions(self, **params):
         """ View your active positions.
         Docs: http://docs.bitfinex.com/#active-positions
@@ -190,7 +193,7 @@ class EndpointsMixin(object):
         params['position_id'] = position_id
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Historical Data """
+    # Historical Data
     def balance_history(self, currency, **params):
         """ View all of your balance ledger entries.
         Docs: http://docs.bitfinex.com/#balance-history
@@ -215,7 +218,7 @@ class EndpointsMixin(object):
         params['symbol'] = symbol
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Margin Funding """
+    # Margin Funding
     def new_offer(self, currency, amount, rate, period, direction, **params):
         """ Submit a new offer.
         Docs: http://docs.bitfinex.com/#new-offer
@@ -272,7 +275,7 @@ class EndpointsMixin(object):
         endpoint = 'funding/close'
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Wallet Balances """
+    # Wallet Balances
     def wallet_balances(self, **params):
         """ See your balances.
         Docs: http://docs.bitfinex.com/#wallet-balances
@@ -280,7 +283,7 @@ class EndpointsMixin(object):
         endpoint = 'balances'
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Margin Information """
+    # Margin Information
     def margin_information(self, **params):
         """ See your trading wallet information for margin trading.
         Docs: http://docs.bitfinex.com/#margin-information
@@ -288,10 +291,10 @@ class EndpointsMixin(object):
         endpoint = 'margin_infos'
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Transfer Between Wallets """
-    def offer_status(self, amount, currency, walletfrom, walletto, **params):
+    # Transfer Between Wallets
+    def wallet_transfer(self, amount, currency, walletfrom, walletto, **params):
         """ Allow you to move available balances between your wallets.
-        Docs: http://docs.bitfinex.com/#margin-information
+        Docs: https://bitfinex.readme.io/v1/reference#rest-auth-transfer-between-wallets
         """
         endpoint = 'transfer'
         params['amount'] = amount
@@ -300,7 +303,7 @@ class EndpointsMixin(object):
         params['walletto'] = walletto
         return self.request(endpoint, method='POST', payload_params=params)
 
-    """ Withdrawal """
+    # Withdrawal
     def withdrawal(self, withdraw_type, walletselected, amount, **params):
         """ Allow you to request a withdrawal from one of your wallet.
         Docs: http://docs.bitfinex.com/#withdrawal
@@ -312,9 +315,7 @@ class EndpointsMixin(object):
         return self.request(endpoint, method='POST', payload_params=params)
 
 
-
-""" Provides functionality for access to core BITFINEX API calls """
-
+# Provides functionality for access to core BITFINEX API calls
 class API(EndpointsMixin, object):
     def __init__(self, environment='live', key=None, secret_key=None):
         """ Instantiates an instance of BitfinexPy's API wrapper """
@@ -333,53 +334,52 @@ class API(EndpointsMixin, object):
     def request(self, endpoint, method='GET', auth=True, params=None, payload_params=None):
         """ Returns dict of response from Bitfinex's open API """
         method = method.lower()
-
-        url = '%s%s' % ( self.api_url, endpoint)
-
-        request_args = {'params':params}
+        url = '%s%s' % (self.api_url, endpoint)
+        request_args = {'params': params}
 
         if auth:
-            payloadObject = {
+            payload_object = {
                 "request": "/v1/%s" % endpoint,
-                "nonce": str(time.time() * 1000000) # update nonce each POST request
+                "nonce": str(time.time() * 1000000)  # update nonce each POST request
             }
             if payload_params is not None:
-                payloadObject.update(payload_params)
-            payload = base64.b64encode(bytes(json.dumps(payloadObject), "utf-8"))
+                payload_object.update(payload_params)
+            payload = base64.b64encode(bytes(json.dumps(payload_object), "utf-8"))
             signature = hmac.new(self.secret_key, msg=payload, digestmod=hashlib.sha384).hexdigest()
             request_args['headers'] = {
                 'X-BFX-APIKEY': self.key,
                 'X-BFX-PAYLOAD': payload,
                 'X-BFX-SIGNATURE': signature
             }
-            #request_args['data'] = {}
+            # request_args['data'] = {}
 
         func = getattr(self.client, method)
         try:
             response = func(url, **request_args)
+            content = response.json()
         except Exception as e:
             print("Failed to get the response because %s. \
-			      The request url is %s"%(str(e),url))
-
-        content = response.json()
+                   The request url is %s" % (str(e), url))
 
         # error message
         if response.status_code >= 400:
-            print("%s error_response : %s"%(str(response.status_code),content))
-            raise BitfinexError(response.status_code,content)
+            print("%s error_response : %s" % (str(response.status_code), content))
+            raise BitfinexError(response.status_code, content)
 
         return content
 
 
-"""HTTPS Streaming"""
-class Streamer():
+# HTTPS Streaming
+class Streamer:
     """ Provides functionality for HTTPS Streaming """
-
+    # TODO: WS stream reader
     def __init__(self, symbol, environment='live', heartbeat=1.0):
         """ Instantiates an instance of BitfinexPy's streaming API wrapper. """
 
+        self.connected = False
+
         if environment == 'live':
-            self.api_url = 'https://api.bitfinex.com/v1/pubticker/'+symbol
+            self.api_url = 'https://api.bitfinex.com/v1/pubticker/' + symbol
         else:
             # for future, access to a demo account.
             pass
@@ -388,14 +388,13 @@ class Streamer():
 
         self.client = requests.Session()
 
-
     def start(self, **params):
         """ Starts the stream with the given parameters """
+        keys = ['last_price', 'bid', 'volume', 'ask', 'low', 'high']
+
         self.connected = True
-
         request_args = {}
-
-        content_ = {'last':None,'bid':None,'volume':None,'ask':None,'low':None,'high':None}
+        content_ = {k: None for k in keys}
 
         while self.connected:
             response = self.client.get(self.api_url, **request_args)
@@ -406,7 +405,7 @@ class Streamer():
                 self.on_error(content)
 
             # when the tick is updated
-            if any([content[key] != content_[key] for key in ['last', 'bid', 'volume', 'ask', 'low', 'high']]):
+            if any([content.get(k) != content_.get(k) for k in keys]):
                 self.on_success(content)
                 content_ = content
 
@@ -422,10 +421,11 @@ class Streamer():
         Override this to handle your streaming data.
         """
         self.connected = False
+        print(content)
         return
 
 
-""" Contains BITFINEX exception """
+# Contains BITFINEX exception
 class BitfinexError(Exception):
     """ Generic error class, catches bitfinex response errors
     """
