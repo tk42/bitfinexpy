@@ -125,7 +125,7 @@ class EndpointsMixin(object):
         Docs: http://docs.bitfinex.com/#cancel-order
         """
         endpoint = 'order/cancel'
-        params['oder_id'] = order_id
+        params['order_id'] = order_id
         return self.request(endpoint, method='POST', payload_params=params)
 
     def cancel_multiple_orders(self, order_ids, **params):
